@@ -210,31 +210,44 @@ class Dastan:
             self.__DisplayState()
             SquareIsValid = False
             Choice = 0
+
+            # allows player to choose either a valid move option or the move offer
             while Choice < 1 or Choice > 3:
                 Choice = int(input("Choose move option to use from queue (1 to 3) or 9 to take the offer: "))
                 if Choice == 9:
                     self.__UseMoveOptionOffer()
                     self.__DisplayState()
+
+            # allows the player to select the piece they want to move
             while not SquareIsValid:
                 StartSquareReference = self.__GetSquareReference("containing the piece to move")
                 SquareIsValid = self.__CheckSquareIsValid(StartSquareReference, True)
+
+            # allows the player to select the position to move the piece to
             SquareIsValid = False
             while not SquareIsValid:
                 FinishSquareReference = self.__GetSquareReference("to move to")
                 SquareIsValid = self.__CheckSquareIsValid(FinishSquareReference, False)
+
+            # determines whether the specified move is legal or not
             MoveLegal = self._CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference)
             if MoveLegal:
+                # updating game state based on move
                 PointsForPieceCapture = self.__CalculatePieceCapturePoints(FinishSquareReference)
                 self._CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))))
                 self._CurrentPlayer.UpdateQueueAfterMove(Choice)
                 self.__UpdateBoard(StartSquareReference, FinishSquareReference)
                 self.__UpdatePlayerScore(PointsForPieceCapture)
                 print("New score: " + str(self._CurrentPlayer.GetScore()) + "\n")
+
+            # swapping the currently active player
             if self._CurrentPlayer.SameAs(self._Players[0]):
                 self._CurrentPlayer = self._Players[1]
             else:
                 self._CurrentPlayer = self._Players[0]
+
             GameOver = self.__CheckIfGameOver()
+
         self.__DisplayState()
         self.__DisplayFinalResult()
 
